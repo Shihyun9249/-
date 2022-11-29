@@ -1,11 +1,56 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-      <title>xss</title>
+      <title>SQL injection</title>
       <meta charset="utf-8">
   </head>
   <body>
-      <h1>xss</h1>
+<style>
+  a {
+    color: black;
+    text-decoration: none;
+  }
+  h1 {
+      font-size: 45px;
+      text-align: center;
+      border-bottom: 1px solid gray;
+      margin: 0px;
+      padding: 20px;
+  }
+  ol {
+      border-right: 1px solid gray;
+      width: 100px;
+      margin: 0;
+  }
+  body {
+        margin: 0px;
+  }
+  #grid {
+          display: grid;
+          grid-template-columns: 150px 1fr;
+  }
+
+  </style>
+      <h1>SQL injection</h1>
+  <div id="grid">
+      <ol>
+          <br><li><a href="index.html">메인으로가기</a></li>
+          <br><li><a href="1.html">XSS로가기</a></li>
+            </ol>
+    <div>
+      <p>로그인 폼에 아이디와 비밀번호를 입력하면 입력한 값이 서버로 넘어가고, 데이터베이스를 조회하여 정보가 있다면 로그인에 성공하게 된다. 이때 데이터베이스에 값을 조회하기 위해 사용되는 언어를 SQL이라고 하며, SQL문이 다음과 같이 작성되었다고 가정하자.</p>
+      <strong>SELECT user FROM user_table WHERE id='입력한 아이디' AND password='입력한 비밀번호';</strong>
+      <p>여기서는 패스워드를 평문으로 비교하는데 사실 이는 예제를 간단히 하기 위한 거고, 테스트가 아닌 일반 사이트에서 이렇게 운영하면 개인정보보호법 29조 위반[2]으로 과태료 폭탄을 맞을 수 있다. 패스워드는 반드시 PBKDF2 이상의 보안성을 가지는 해시 함수로 해싱해야 한다. 대부분 SHA를 쓴다.
+      </P>일반적인 유저라면 이렇게 로그인할 것이다.<br>아이디 : Adisain<br>비밀번호 : askbj139<p>
+      <strong>SELECT user FROM user_table WHERE id='Adisain' AND password='askbj139';</strong></P>
+      <p>그리고 SQL injection을 시도하려는 공격자가 다음과 같이 입력했다.</P>아이디 : admin<br>비밀번호 : ' OR '1' = '1<br><p><strong>SELECT user FROM user_table WHERE id='admin' AND password=' ' OR '1' = '1';</strong></P>
+      <p>비밀번호 입력값과 마지막 구문을 자세히 살펴보자. 따옴표를 올바르게 닫으며 password=' '를 만듦과 동시에 SQL 구문 뒤에 ' OR '1' = '1'을 붙였다. WHERE 뒤에 있는 구문을 간단히 축약하면 false AND false OR true로 정리할 수 있는데, 논리학에 따르면 AND 연산은 OR보다 연산 우선순위가 빠르기 때문에 해당 구문의 연산 값은 true가 되어 올바른 값으로 판단하고 실행하게 된다. 즉, 아이디와 비밀번호를 몰라도 ' OR '1' = '1 구문 때문에 로그인에 성공하게 되는 것이다.
+      login admin.asp라고 덕덕고에 쳐서 나오는 웹사이트 아무데나 1'or'1'='1을 넣으면 작동이 되는 사이트인 경우 작동이 된다!</p><p>로그인뿐만 아니라 JOIN이나 UNION 같은 구문을 통해 공격자가 원하는 코드를 실행할 수도 있다.
+      </P><p>MySQL 기준으로 SQL injection이 되는지 확인하려면 ' 나 " 를 로그인 창에 넣어서 SQL 에러를 뿜어내는지 확인하면 된다.</P>
+      <strong>Warning: mysql_fetch_array():</strong><br><strong>Warning: mysql_fetch_assoc():</strong><br><strong>Warning: mysql_numrows():
+      </strong><br><strong>Warning: mysql_num_rows():</strong><br><strong>Warning: mysql_result():</strong><br><strong>Warning: mysql_preg_match():</strong><br><br>보통은 이렇게 나올 것이다.
+    </div>
+    </div>
 
   </body>
 </html>
